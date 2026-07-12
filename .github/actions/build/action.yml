@@ -1,0 +1,72 @@
+name: 'Build'
+description: 'Build'
+inputs:
+  CONFIGURATION:
+    required: false
+    default: 'Release'
+  DOTNET_CORE_VERSION:
+    required: false
+    default: '10.x'
+  AZURE_CLIENT_ID:
+    required: true
+  AZURE_TENANT_ID:
+    required: true
+  AZURE_SUBSCRIPTION_ID:
+    required: true
+  TRUSTED_SIGNING_ENDPOINT:
+    required: true
+  TRUSTED_SIGNING_ACCOUNT:
+    required: true
+  TRUSTED_SIGNING_CERTIFICATE_PROFILE:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ inputs.DOTNET_CORE_VERSION }}
+
+    - name: Run Branch Release Versioning
+      id: nextversion
+      uses: ./.github/actions/versioning
+
+    - name: Publish
+      run: dotnet publish --configuration ${{ inputs.CONFIGURATION }} -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:Version=${{ steps.nextversion.outputs.VERSION }} -p:AssemblyVersion=${{ steps.nextversion.outputs.ASSEMBLYSEMVER }}
+      shell: bash
+
+    - name: Azure Login
+      uses: azure/login@v3
+      with:
+        client-id: ${{ inputs.AZURE_CLIENT_ID }}
+        tenant-id: ${{ inputs.AZURE_TENANT_ID }}
+        subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Install Sign CLI
+      run: dotnet tool install --global sign --prerelease
+      shell: bash
+
+    - name: Sign JigsawPuzzle.exe
+      run: |
+        sign code artifact-signing `
+          -ase "${{ inputs.TRUSTED_SIGNING_ENDPOINT }}" `
+          -asa "${{ inputs.TRUSTED_SIGNING_ACCOUNT }}" `
+          -ascp "${{ inputs.TRUSTED_SIGNING_CERTIFICATE_PROFILE }}" `
+          bin/${{ inputs.CONFIGURATION }}/net10.0/win-x64/publish/JigsawPuzzle.exe
+      shell: pwsh
+
+    - name: Stage Release Asset
+      run: cp "bin/${{ inputs.CONFIGURATION }}/net10.0/win-x64/publish/JigsawPuzzle.exe" "JigsawPuzzle-${{ steps.nextversion.outputs.VERSION }}-win-x64.exe"
+      shell: bash
+
+    - name: Create GitHub Release
+      run: |
+        gh release create "v${{ steps.nextversion.outputs.VERSION }}" \
+          "JigsawPuzzle-${{ steps.nextversion.outputs.VERSION }}-win-x64.exe" \
+          --title "v${{ steps.nextversion.outputs.VERSION }}" \
+          --generate-notes \
+          --target "${{ github.sha }}"
+      env:
+        GH_TOKEN: ${{ github.token }}
+      shell: bash

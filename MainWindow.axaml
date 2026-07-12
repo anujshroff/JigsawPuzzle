@@ -1,0 +1,51 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:JigsawPuzzle.Controls"
+        x:Class="JigsawPuzzle.MainWindow"
+        Title="Jigsaw Puzzle"
+        Icon="/Assets/icon.png"
+        Width="1280" Height="800"
+        MinWidth="480" MinHeight="360"
+        WindowStartupLocation="CenterScreen"
+        Background="#14141C">
+
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Background="#1D1D28" BorderBrush="#0A0A10" BorderThickness="0,0,0,1" Padding="16,10">
+      <DockPanel LastChildFill="False">
+        <Button x:Name="UpdateButton" DockPanel.Dock="Left" Classes="accent" IsVisible="False"
+                VerticalAlignment="Center" ToolTip.Tip="Open the downloads page" />
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <Border Background="#12121A" CornerRadius="10" Padding="3" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Spacing="2">
+              <Button x:Name="EasyButton" Classes="seg" Content="Easy" ToolTip.Tip="~20 pieces" />
+              <Button x:Name="MediumButton" Classes="seg selected" Content="Medium" ToolTip.Tip="~50 pieces" />
+              <Button x:Name="HardButton" Classes="seg" Content="Hard" ToolTip.Tip="~100 pieces" />
+            </StackPanel>
+          </Border>
+          <Button x:Name="TidyButton" Classes="ghost" Content="Tidy" ToolTip.Tip="Re-arrange loose pieces" />
+          <Button x:Name="NewPuzzleButton" Classes="accent" Content="New puzzle" />
+          <Button x:Name="FolderButton" Classes="ghost" Content="Folder…" />
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <Panel>
+      <controls:PuzzleCanvas x:Name="Board" />
+
+      <Border x:Name="Overlay"
+              IsVisible="False"
+              HorizontalAlignment="Center" VerticalAlignment="Center"
+              Background="#F21D1D28" CornerRadius="16" Padding="44,36"
+              BorderBrush="#26FFFFFF" BorderThickness="1"
+              BoxShadow="0 12 48 0 #80000000">
+        <StackPanel Spacing="22" HorizontalAlignment="Center">
+          <TextBlock x:Name="OverlayText"
+                     FontSize="21" FontWeight="SemiBold" Foreground="#F2F2FA"
+                     TextAlignment="Center" TextWrapping="Wrap" MaxWidth="460" LineHeight="30" />
+          <Button x:Name="OverlayPickButton" Classes="accent" Content="Pick folder…"
+                  HorizontalAlignment="Center" FontSize="15" Padding="22,9" />
+        </StackPanel>
+      </Border>
+    </Panel>
+  </DockPanel>
+</Window>
