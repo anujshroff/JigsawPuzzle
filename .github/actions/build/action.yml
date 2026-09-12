@@ -24,7 +24,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: ${{ inputs.DOTNET_CORE_VERSION }}
 
@@ -43,18 +43,16 @@ runs:
         tenant-id: ${{ inputs.AZURE_TENANT_ID }}
         subscription-id: ${{ inputs.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Install Sign CLI
-      run: dotnet tool install --global sign --prerelease
-      shell: bash
-
-    - name: Sign JigsawPuzzle.exe
-      run: |
-        sign code artifact-signing `
-          -ase "${{ inputs.TRUSTED_SIGNING_ENDPOINT }}" `
-          -asa "${{ inputs.TRUSTED_SIGNING_ACCOUNT }}" `
-          -ascp "${{ inputs.TRUSTED_SIGNING_CERTIFICATE_PROFILE }}" `
-          bin/${{ inputs.CONFIGURATION }}/net10.0/win-x64/publish/JigsawPuzzle.exe
-      shell: pwsh
+    - name: Sign files with Artifact Signing
+      uses: azure/artifact-signing-action@v2
+      with:
+        endpoint: ${{ inputs.TRUSTED_SIGNING_ENDPOINT }}
+        signing-account-name: ${{ inputs.TRUSTED_SIGNING_ACCOUNT }}
+        certificate-profile-name: ${{ inputs.TRUSTED_SIGNING_CERTIFICATE_PROFILE }}
+        files: ${{ github.workspace }}/bin/${{ inputs.CONFIGURATION }}/net10.0/win-x64/publish/JigsawPuzzle.exe
+        file-digest: SHA256
+        timestamp-rfc3161: http://timestamp.acs.microsoft.com
+        timestamp-digest: SHA256
 
     - name: Stage Release Asset
       run: cp "bin/${{ inputs.CONFIGURATION }}/net10.0/win-x64/publish/JigsawPuzzle.exe" "JigsawPuzzle-${{ steps.nextversion.outputs.VERSION }}-win-x64.exe"
