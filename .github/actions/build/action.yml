@@ -6,7 +6,7 @@ inputs:
     default: 'Release'
   DOTNET_CORE_VERSION:
     required: false
-    default: '10.x'
+    default: '11.x'
   AZURE_CLIENT_ID:
     required: true
   AZURE_TENANT_ID:
