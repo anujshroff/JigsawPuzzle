@@ -49,13 +49,13 @@ runs:
         endpoint: ${{ inputs.TRUSTED_SIGNING_ENDPOINT }}
         signing-account-name: ${{ inputs.TRUSTED_SIGNING_ACCOUNT }}
         certificate-profile-name: ${{ inputs.TRUSTED_SIGNING_CERTIFICATE_PROFILE }}
-        files: ${{ github.workspace }}/bin/${{ inputs.CONFIGURATION }}/net10.0/win-x64/publish/JigsawPuzzle.exe
+        files: ${{ github.workspace }}/bin/${{ inputs.CONFIGURATION }}/net11.0/win-x64/publish/JigsawPuzzle.exe
         file-digest: SHA256
         timestamp-rfc3161: http://timestamp.acs.microsoft.com
         timestamp-digest: SHA256
 
     - name: Stage Release Asset
-      run: cp "bin/${{ inputs.CONFIGURATION }}/net10.0/win-x64/publish/JigsawPuzzle.exe" "JigsawPuzzle-${{ steps.nextversion.outputs.VERSION }}-win-x64.exe"
+      run: cp "bin/${{ inputs.CONFIGURATION }}/net11.0/win-x64/publish/JigsawPuzzle.exe" "JigsawPuzzle-${{ steps.nextversion.outputs.VERSION }}-win-x64.exe"
       shell: bash
 
     - name: Create GitHub Release

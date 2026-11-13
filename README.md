@@ -1,6 +1,6 @@
 # Jigsaw Puzzle
 
-A cross-platform jigsaw puzzle game (.NET 10 + Avalonia). Pick a folder of images —
+A cross-platform jigsaw puzzle game (.NET 11 + Avalonia). Pick a folder of images —
 the game cuts a random one into classic interlocking pieces. Drag pieces together;
 matching neighbors snap and link, and linked groups drag as one. When every piece is
 connected, the puzzle is solved and the next random image starts automatically.
@@ -34,7 +34,7 @@ linking to the downloads page. The check is silent when offline.
 dotnet run
 ```
 
-Requires the .NET 10 SDK. Optionally pass an image folder to skip the picker:
+Requires the .NET 11 SDK. Optionally pass an image folder to skip the picker:
 
 ```
 dotnet run -- "C:\path\to\images"
@@ -48,7 +48,7 @@ dotnet publish -c Release -r linux-x64 --self-contained -p:PublishSingleFile=tru
 dotnet publish -c Release -r osx-arm64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 ```
 
-The single-file executable lands in `bin/Release/net10.0/<rid>/publish/`.
+The single-file executable lands in `bin/Release/net11.0/<rid>/publish/`.
 
 Notes:
 - **Linux**: needs a desktop session (X11/Wayland); mark the file executable (`chmod +x`)
